@@ -28,7 +28,9 @@ Get-NetFirewallRule -DisplayName "Thor Steam Splash" | Remove-NetFirewallRule
 
 ## Thor setup
 
-Open `http://<pc-ip>:8787` in Chrome on the bottom screen, then use Chrome's menu > Add to Home screen > Install. The installed app opens full screen. Set it to launch on the bottom screen from its icon's Screen Launch option or with Wayfinder.
+Install `now-playing.apk` from the latest release (or build it with `android/build.sh`). It's a full-screen viewer for the page, with no browser UI. Launch it on the bottom screen from its icon's Screen Launch option or with Wayfinder.
+
+It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change the address. If the PC is off it shows "PC not reachable" and retries every 5 seconds.
 
 ## Notes
 
