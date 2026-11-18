@@ -26,6 +26,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
+        if (Screens.moveToSecondary(this)) {
+            finish();
+            return;
+        }
         prefs = getSharedPreferences("settings", MODE_PRIVATE);
 
         web = new WebView(this);
@@ -91,7 +95,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
-        web.destroy();
+        if (web != null) web.destroy();
         super.onDestroy();
     }
 }
