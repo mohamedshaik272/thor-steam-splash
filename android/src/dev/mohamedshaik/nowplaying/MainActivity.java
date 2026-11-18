@@ -14,10 +14,13 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends Activity {
     private static final String DEFAULT_URL = "http://192.168.1.237:8787/";
-    private static final long RETRY_MS = 5000;
+    private static final long RETRY_MS = 2000;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private WebView web;
@@ -39,11 +42,7 @@ public class MainActivity extends Activity {
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError err) {
-                if (req.isForMainFrame()) {
-                    view.loadData(offlinePage(), "text/html", "utf-8");
-                    handler.removeCallbacksAndMessages(null);
-                    handler.postDelayed(MainActivity.this::load, RETRY_MS);
-                }
+                if (req.isForMainFrame()) load();
             }
         });
         web.setOnLongClickListener(v -> {
@@ -68,15 +67,41 @@ public class MainActivity extends Activity {
         return prefs.getString("url", DEFAULT_URL);
     }
 
+    // Shows the waiting screen and switches to the page once the server answers.
     private void load() {
-        web.loadUrl(url());
+        handler.removeCallbacksAndMessages(null);
+        web.loadDataWithBaseURL(null, offlinePage(), "text/html", "utf-8", null);
+        probe();
+    }
+
+    private void probe() {
+        String target = url();
+        new Thread(() -> {
+            boolean up = false;
+            try {
+                HttpURLConnection c = (HttpURLConnection) new URL(target + "api/now").openConnection();
+                c.setConnectTimeout(1500);
+                c.setReadTimeout(1500);
+                up = c.getResponseCode() == 200;
+                c.disconnect();
+            } catch (IOException ignored) {
+            }
+            boolean ok = up;
+            handler.post(() -> {
+                if (isDestroyed()) return;
+                if (ok) web.loadUrl(target);
+                else handler.postDelayed(this::probe, RETRY_MS);
+            });
+        }).start();
     }
 
     private String offlinePage() {
-        return "<html><body style='margin:0;background:#000;color:#888;display:flex;"
-                + "align-items:center;justify-content:center;height:100vh;font:5vw sans-serif'>"
-                + "PC not reachable<br><small style='font-size:3vw'>" + url()
-                + "<br>Long-press to change</small></body></html>";
+        return "<html><body style='margin:0;background:#000;color:#fff;display:flex;flex-direction:column;"
+                + "align-items:center;justify-content:center;height:100vh;font-family:sans-serif;gap:2vh'>"
+                + "<div style='font-size:7vw;font-weight:700'>Waiting for stream</div>"
+                + "<div style='font-size:3.2vw;color:#777'>The art appears once Moonlight connects</div>"
+                + "<div style='font-size:2.6vw;color:#444;margin-top:4vh'>" + url() + " \u00b7 long-press to change</div>"
+                + "</body></html>";
     }
 
     private void editUrl() {
@@ -86,7 +111,9 @@ public class MainActivity extends Activity {
                 .setTitle("PC address")
                 .setView(input)
                 .setPositiveButton("Save", (d, w) -> {
-                    prefs.edit().putString("url", input.getText().toString().trim()).apply();
+                    String u = input.getText().toString().trim();
+                    if (!u.endsWith("/")) u += "/";
+                    prefs.edit().putString("url", u).apply();
                     load();
                 })
                 .setNegativeButton("Cancel", null)

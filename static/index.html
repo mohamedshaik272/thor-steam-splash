@@ -83,7 +83,7 @@ async function poll() {
       await setGame(data);
     }
   } catch {
-    $("status").textContent = "PC not reachable";
+    $("status").textContent = "Waiting for stream";
     if (current !== 0) { current = 0; show(false); }
   }
 }
