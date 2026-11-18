@@ -2,7 +2,9 @@ package dev.mohamedshaik.nowplaying;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,11 @@ import java.net.URL;
 public class MainActivity extends Activity {
     private static final String DEFAULT_URL = "http://192.168.1.237:8787/";
     private static final long RETRY_MS = 2000;
+    static final String EXTRA_NAME = "name";
+    static final String EXTRA_STEAM_ID = "steam_id";
+    static final String EXTRA_HERO = "hero";
+    static final String EXTRA_LOGO = "logo";
+    private static final String CDN = "https://cdn.cloudflare.steamstatic.com/steam/apps/";
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private WebView web;
@@ -34,11 +41,14 @@ public class MainActivity extends Activity {
             return;
         }
         WatcherService.viewer = new java.lang.ref.WeakReference<>(this);
+        // The controller has to stay with the game on the top screen, so this window never takes key focus.
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         prefs = getSharedPreferences("settings", MODE_PRIVATE);
 
         web = new WebView(this);
         web.setBackgroundColor(Color.BLACK);
         web.getSettings().setJavaScriptEnabled(true);
+        web.getSettings().setAllowFileAccess(true);
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError err) {
@@ -50,7 +60,27 @@ public class MainActivity extends Activity {
             return true;
         });
         setContentView(web);
-        load();
+        String game = getIntent().getStringExtra(EXTRA_NAME);
+        if (game != null) showGame(game);
+        else load();
+    }
+
+    // A game Cocoon launched on the top screen. Art comes from Cocoon's scraped media or Steam's CDN.
+    private void showGame(String name) {
+        Intent in = getIntent();
+        String steam = in.getStringExtra(EXTRA_STEAM_ID);
+        String hero = fileUrl(in.getStringExtra(EXTRA_HERO));
+        String logo = fileUrl(in.getStringExtra(EXTRA_LOGO));
+        if (steam != null) {
+            if (hero == null) hero = CDN + steam + "/library_hero.jpg";
+            if (logo == null) logo = CDN + steam + "/logo.png";
+        }
+        String html = GamePage.render(name, hero, logo, System.currentTimeMillis());
+        web.loadDataWithBaseURL("file:///", html, "text/html", "utf-8", null);
+    }
+
+    private static String fileUrl(String path) {
+        return path == null ? null : Uri.fromFile(new java.io.File(path)).toString();
     }
 
     @Override

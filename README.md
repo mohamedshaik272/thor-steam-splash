@@ -34,7 +34,7 @@ It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change 
 
 ### Auto-open and auto-close
 
-The app includes an accessibility service, **Stream PC auto-open**. When it's on, the viewer opens on the bottom screen whenever Moonlight or Artemis is on the top screen, however you opened it, and closes about 5 seconds after you leave. It only checks which app is on the top screen. Turn it on in Settings > Accessibility > Stream PC auto-open.
+The app includes an accessibility service, **Stream PC auto-open**. When it's on, the viewer opens on the bottom screen whenever Moonlight or Artemis is on the top screen, however you opened it, and closes about 5 seconds after you leave. It does the same for games launched from Cocoon, showing the game's art from Cocoon's scraped media (or Steam's CDN for GameNative `.steam` games). The DS, 3DS and Wii U emulators are skipped because they use the bottom screen themselves. The viewer never takes controller focus from the game. It only checks which app is on the top screen. Turn it on in Settings > Accessibility > Stream PC auto-open.
 
 ## Notes
 

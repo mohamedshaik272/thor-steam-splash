@@ -11,9 +11,13 @@ final class Screens {
     private Screens() {}
 
     static void openViewer(Context ctx) {
+        openViewer(ctx, new Intent(ctx, MainActivity.class));
+    }
+
+    static void openViewer(Context ctx, Intent intent) {
         if (WatcherService.viewer.get() != null) return;
         Display bottom = secondary(ctx);
-        if (bottom != null) launchOn(ctx, new Intent(ctx, MainActivity.class), bottom.getDisplayId());
+        if (bottom != null) launchOn(ctx, intent, bottom.getDisplayId());
     }
 
     static Display secondary(Context ctx) {

@@ -32,6 +32,12 @@ public class StreamActivity extends Activity {
             Screens.launchOn(this, client, Display.DEFAULT_DISPLAY);
         }
         Screens.openViewer(this);
+        // Opening the viewer moves focus to the bottom screen, so bring the client back to the front afterwards.
+        if (client != null) {
+            Intent again = new Intent(client);
+            new android.os.Handler(android.os.Looper.getMainLooper())
+                    .postDelayed(() -> Screens.launchOn(getApplicationContext(), again, Display.DEFAULT_DISPLAY), 700);
+        }
         finish();
     }
 }
