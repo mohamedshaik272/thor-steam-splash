@@ -15,11 +15,11 @@ Python standard library only, no API keys. Artwork is loaded from Steam's CDN.
    .\install.ps1
    ```
 
-   That opens TCP 8787 on private networks, registers a scheduled task that starts the server at logon, starts it now, and prints the address to use.
+   That opens TCP 8787 on private networks, registers a scheduled task for the server, and prints the address to use. The server only runs while you're streaming: the script adds start and stop commands to Apollo's or Sunshine's `global_prep_cmd` (keeping any you already have, with a `.bak` copy of the config) and restarts the service. If neither is installed in Program Files, it prints the commands to add under Configuration > General > Command Preparations.
 
 To test without installing, run `python server.py` and open `http://localhost:8787`.
 
-To remove it
+To remove it, delete the Thor Steam Splash entry from Command Preparations in Apollo/Sunshine, then run
 
 ```powershell
 Unregister-ScheduledTask -TaskName "Thor Steam Splash" -Confirm:$false
@@ -30,7 +30,7 @@ Get-NetFirewallRule -DisplayName "Thor Steam Splash" | Remove-NetFirewallRule
 
 Install `now-playing.apk` from the latest release (or build it with `android/build.sh`). Its launcher icon is **Stream PC**, which opens Artemis (or Moonlight, if Artemis isn't installed) on the top screen and the full-screen viewer on the bottom screen. Tapping it again brings both back instead of opening new copies. The viewer always moves itself to the bottom screen, wherever it's opened.
 
-It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change the address. If the PC is off it shows "PC not reachable" and retries every 5 seconds.
+It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change the address. Until a stream starts, or if the PC is off, it shows "PC not reachable" and retries every 5 seconds.
 
 ### Auto-open and auto-close
 
