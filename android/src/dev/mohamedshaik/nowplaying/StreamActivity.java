@@ -11,6 +11,13 @@ public class StreamActivity extends Activity {
     // Artemis (the Moonlight fork for Apollo) first, then Moonlight. Keep in sync with <queries> in the manifest.
     private static final String[] CLIENTS = {"com.limelight.noir", "com.limelight"};
 
+    static boolean isClient(String pkg) {
+        for (String c : CLIENTS) {
+            if (c.equals(pkg)) return true;
+        }
+        return false;
+    }
+
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
@@ -24,10 +31,7 @@ public class StreamActivity extends Activity {
         } else {
             Screens.launchOn(this, client, Display.DEFAULT_DISPLAY);
         }
-        Display bottom = Screens.secondary(this);
-        if (bottom != null) {
-            Screens.launchOn(this, new Intent(this, MainActivity.class), bottom.getDisplayId());
-        }
+        Screens.openViewer(this);
         finish();
     }
 }

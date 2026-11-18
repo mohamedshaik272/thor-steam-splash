@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="watcher_description">Opens the game art on the bottom screen while Moonlight or Artemis is on the top screen, and closes it when you leave. It only checks which app is on the top screen.</string>
+</resources>

@@ -32,6 +32,10 @@ Install `now-playing.apk` from the latest release (or build it with `android/bui
 
 It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change the address. If the PC is off it shows "PC not reachable" and retries every 5 seconds.
 
+### Auto-open and auto-close
+
+The app includes an accessibility service, **Stream PC auto-open**. When it's on, the viewer opens on the bottom screen whenever Moonlight or Artemis is on the top screen, however you opened it, and closes about 5 seconds after you leave. It only checks which app is on the top screen. Turn it on in Settings > Accessibility > Stream PC auto-open.
+
 ## Notes
 
 - Detection uses Steam's `RunningAppID` registry value, so only games launched through Steam are picked up.

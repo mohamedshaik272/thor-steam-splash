@@ -10,6 +10,12 @@ import android.view.Display;
 final class Screens {
     private Screens() {}
 
+    static void openViewer(Context ctx) {
+        if (WatcherService.viewer.get() != null) return;
+        Display bottom = secondary(ctx);
+        if (bottom != null) launchOn(ctx, new Intent(ctx, MainActivity.class), bottom.getDisplayId());
+    }
+
     static Display secondary(Context ctx) {
         DisplayManager dm = ctx.getSystemService(DisplayManager.class);
         for (Display d : dm.getDisplays()) {

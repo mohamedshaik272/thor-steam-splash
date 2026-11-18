@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
             finish();
             return;
         }
+        WatcherService.viewer = new java.lang.ref.WeakReference<>(this);
         prefs = getSharedPreferences("settings", MODE_PRIVATE);
 
         web = new WebView(this);
@@ -95,6 +96,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         handler.removeCallbacksAndMessages(null);
+        if (WatcherService.viewer.get() == this) WatcherService.viewer.clear();
         if (web != null) web.destroy();
         super.onDestroy();
     }
