@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
+        <package android:name="com.limelight.noir" />
         <package android:name="com.limelight" />
     </queries>
 
@@ -19,6 +20,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:taskAffinity="dev.mohamedshaik.nowplaying.viewer"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|density"
             android:resizeableActivity="true">
         </activity>

@@ -18,8 +18,9 @@ final class Screens {
         return null;
     }
 
+    // Brings an existing task for the intent to the front if there is one, otherwise starts it on displayId.
     static void launchOn(Context ctx, Intent intent, int displayId) {
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ActivityOptions opts = ActivityOptions.makeBasic().setLaunchDisplayId(displayId);
         ctx.startActivity(intent, opts.toBundle());
     }
@@ -29,7 +30,9 @@ final class Screens {
         Display here = a.getDisplay();
         Display target = secondary(a);
         if (target == null || here == null || here.getDisplayId() == target.getDisplayId()) return false;
-        launchOn(a, new Intent(a, MainActivity.class), target.getDisplayId());
+        // The viewer's own task is the one on the wrong screen, so force a new one. The caller finishes the old one.
+        Intent intent = new Intent(a, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        launchOn(a, intent, target.getDisplayId());
         return true;
     }
 }

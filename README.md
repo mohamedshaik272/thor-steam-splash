@@ -28,7 +28,7 @@ Get-NetFirewallRule -DisplayName "Thor Steam Splash" | Remove-NetFirewallRule
 
 ## Thor setup
 
-Install `now-playing.apk` from the latest release (or build it with `android/build.sh`). Its launcher icon is **Stream PC**, which opens Moonlight on the top screen and the full-screen viewer on the bottom screen. The viewer always moves itself to the bottom screen, wherever it's opened.
+Install `now-playing.apk` from the latest release (or build it with `android/build.sh`). Its launcher icon is **Stream PC**, which opens Artemis (or Moonlight, if Artemis isn't installed) on the top screen and the full-screen viewer on the bottom screen. Tapping it again brings both back instead of opening new copies. The viewer always moves itself to the bottom screen, wherever it's opened.
 
 It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change the address. If the PC is off it shows "PC not reachable" and retries every 5 seconds.
 
