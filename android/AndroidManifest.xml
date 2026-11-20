@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dev.mohamedshaik.nowplaying"
-    android:versionCode="10"
-    android:versionName="1.7">
+    android:versionCode="11"
+    android:versionName="1.8">
 
     <uses-sdk android:minSdkVersion="30" android:targetSdkVersion="34" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -25,11 +25,11 @@
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:taskAffinity="dev.mohamedshaik.nowplaying.viewer"
-            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|density"
-            android:resizeableActivity="true">
-        </activity>
+            android:exported="false"
+            android:label="PC address"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
         <activity
             android:name=".StreamActivity"
             android:exported="true"

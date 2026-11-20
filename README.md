@@ -28,13 +28,13 @@ Get-NetFirewallRule -DisplayName "Thor Steam Splash" | Remove-NetFirewallRule
 
 ## Thor setup
 
-Install `now-playing.apk` from the latest release (or build it with `android/build.sh`). Its launcher icon is **Stream PC**, which opens Artemis (or Moonlight, if Artemis isn't installed) on the top screen and the full-screen viewer on the bottom screen. Tapping it again brings both back instead of opening new copies. The viewer always moves itself to the bottom screen, wherever it's opened.
+Install `now-playing.apk` from the latest release (or build it with `android/build.sh`). Its launcher icon is **Stream PC**, which opens Artemis (or Moonlight, if Artemis isn't installed) on the top screen. The page on the bottom screen comes from the accessibility service described below, so turn that on.
 
 It loads `http://192.168.1.237:8787/` by default. Long-press anywhere to change the address. Until a stream starts, or if the PC is off, it shows "Waiting for stream" and checks again every 2 seconds.
 
 ### Auto-open and auto-close
 
-The app includes an accessibility service, **Stream PC auto-open**. When it's on, the viewer opens on the bottom screen whenever Moonlight or Artemis is on the top screen, however you opened it, and closes about 5 seconds after you leave. It does the same for games launched from Cocoon, showing the game's art from Cocoon's scraped media (or Steam's CDN for GameNative `.steam` games). The DS, 3DS and Wii U emulators are skipped because they use the bottom screen themselves. The viewer never takes controller focus from the game. It only checks which app is on the top screen. Turn it on in Settings > Accessibility > Stream PC auto-open.
+The app includes an accessibility service, **Stream PC auto-open**. When it's on, the page appears on the bottom screen whenever Moonlight or Artemis is on the top screen, however you opened it, and goes away about 5 seconds after you leave. It does the same for a game Cocoon has just launched, showing the game's art from Cocoon's scraped media (or Steam's CDN for GameNative `.steam` games). Opening that app later from somewhere else doesn't bring the art back. The DS, 3DS and Wii U emulators are skipped because they use the bottom screen themselves. The page is drawn as an accessibility overlay rather than an activity, so it never takes controller focus and leaves nothing behind in the bottom screen's task list. Nothing changes while the screens are off. It only checks which app is on the top screen. Turn it on in Settings > Accessibility > Stream PC auto-open.
 
 ## Notes
 

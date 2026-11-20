@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,13 +46,22 @@ final class CocoonLaunch {
         }
         int at = tail.lastIndexOf("Launch: ");
         if (at < 0) return null;
-        String block = tail.substring(at - 1 < 0 ? 0 : at - 1);
+        String block = tail.substring(tail.lastIndexOf('\n', at) + 1);
         Matcher n = LAUNCH.matcher(block);
         Matcher p = PLAYER.matcher(block);
         Matcher r = FILE.matcher(block);
         if (!n.find() || !p.find()) return null;
         File rom = r.find() ? new File(r.group(1)) : null;
-        return new CocoonLaunch(n.group(1).trim(), p.group(1), rom, log.lastModified());
+        return new CocoonLaunch(n.group(1).trim(), p.group(1), rom, stamp(block));
+    }
+
+    // Lines start with a local timestamp like [2026-11-19 18:30:03.660].
+    private static long stamp(String line) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).parse(line.substring(1, 24)).getTime();
+        } catch (ParseException | StringIndexOutOfBoundsException e) {
+            return 0;
+        }
     }
 
     private static File findLog() {
@@ -73,14 +85,26 @@ final class CocoonLaunch {
         }
     }
 
-    // Cocoon keeps scraped art at Cocoon/downloaded_media/<platform>/<kind>/<rom name>.png.
+    // Cocoon keeps scraped art at Cocoon/downloaded_media/<platform>/<kind>/<rom name>[__cocoon_edit_...].<ext>.
+    // The platform folder isn't always the ROM folder (ROMs/steam scrapes into windows), so every platform is
+    // searched, and the newest match wins.
     File media(String kind) {
         if (rom == null) return null;
         File platform = rom.getParentFile();
-        File sd = platform == null ? null : platform.getParentFile();
-        if (sd == null || sd.getParentFile() == null) return null;
+        File roms = platform == null ? null : platform.getParentFile();
+        if (roms == null || roms.getParentFile() == null) return null;
+        File[] platforms = new File(roms.getParentFile(), "Cocoon/downloaded_media").listFiles(File::isDirectory);
+        if (platforms == null) return null;
         String base = rom.getName().replaceFirst("\\.[^.]+$", "");
-        File f = new File(sd.getParentFile(), "Cocoon/downloaded_media/" + platform.getName() + "/" + kind + "/" + base + ".png");
-        return f.canRead() ? f : null;
+        File best = null;
+        for (File p : platforms) {
+            File[] files = new File(p, kind).listFiles((dir, name) ->
+                    name.startsWith(base + ".") || name.startsWith(base + "__cocoon_edit_"));
+            if (files == null) continue;
+            for (File f : files) {
+                if (f.canRead() && (best == null || f.lastModified() > best.lastModified())) best = f;
+            }
+        }
+        return best;
     }
 }
